@@ -3,14 +3,47 @@ defmodule ApiWeb.SessionController do
 
   alias Api.Guardian
 
-  def signin(conn, %{"user" => params}) do
-    username = params["username"]
-    password = params["password"]
-    conn
+  alias Api.Accounts.User
+  alias Api.Repo
+  alias Api.Ldap
+
+  def signin(conn, %{"username" => username, "password" => password}) do
+    case Api.Ldap.authenticate(username, password) do
+      :ok -> handle_sign_in(conn, username)
+      _ -> handle_error(conn)
+    end
   end
 
-  def signout(conn, params) do
-    Guardian.Plug.sign_out(conn, params)
-    |> redirect(to: "/api/v1")
+  defp handle_sign_in(conn, username) do
+    {:ok, user} = insert_or_update_user(username)
+    {:ok, token, claims} = Guardian.encode_and_sign(user)
+
+    conn
+    |> render("success.json", jwt: token, claims: claims)
+  end
+
+  defp insert_or_update_user(username) do
+    user_attributes = Ldap.get_by_uid(username)
+    user = Repo.get_by(User, uid: username)
+
+    changeset =
+      case user do
+        nil -> User.changeset(%User{}, user_attributes)
+        _ -> User.changeset(user, user_attributes)
+      end
+
+    Repo.insert_or_update(changeset)
+  end
+
+  defp handle_error(conn) do
+    conn
+    |> put_status(:unauthorized)
+    |> render("failure.json")
+  end
+
+  def signout(conn, %{}) do
+    conn
+    |> Api.Guardian.Plug.sign_out()
+    |> render("signout.json")
   end
 end

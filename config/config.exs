@@ -8,7 +8,7 @@
 use Mix.Config
 
 config :api,
-  ecto_repos: [Api.Repo]
+  ecto_repos: [Api.Repo],
   data_url: "/opt/publica.re/repos/"
 
 # Configures the endpoint
@@ -30,3 +30,11 @@ config :phoenix, :json_library, Jason
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
+
+config :paddle, Paddle,
+  host: "publica.re",
+  base: "dc=publica,dc=re",
+  ssl: false,
+  account_subdn: "ou=users",
+  port: 389,
+  schema_files: Path.wildcard("/etc/openldap/schema/*.schema")

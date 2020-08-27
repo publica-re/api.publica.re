@@ -3,15 +3,33 @@ defmodule Api.Accounts.User do
   import Ecto.Changeset
 
   schema "users" do
-    field :username, :string
-    field :photo, :binary
+    field :uid, :string
+    field :title, :string
+    field :displayName, :string
     field :givenName, :string
     field :surname, :string
-    field :displayName, :string
-    field :email, :string
-    field :phone, :string
-    field :url, :string
-    field :password, :string, virtual: true
+    field :initials, :string
+    field :description, :string
+    field :labeledURI, :string
+    field :mail, :string
+    field :jpegPhoto, :binary
+    field :photo, :string
+    field :preferredLanguage, :string
+    field :mobile, :string
+    field :telephoneNumber, :string
+    field :businessCategory, :string
+    field :employeeNumber, :string
+    field :employeeType, :string
+    field :organizationName, :string
+    field :userCertificate, {:array, :string}
+    field :postalAddress, :string
+    field :postOfficeBox, :string
+    field :postalCode, :string
+    field :localityName, :string
+    field :preferredDeliveryMethod, :string
+    field :stateOrProvinceName, :string
+    field :seeAlso, :string
+    field :userPassword, :string, virtual: true
 
     timestamps()
   end
@@ -19,14 +37,40 @@ defmodule Api.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:username, :photo, :givenName, :surname, :displayName, :email, :phone, :url])
-    |> validate_required([:username, :displayName, :email])
-    |> unique_constraint(:email)
-    |> unique_constraint(:username)
+    |> cast(attrs, [
+      :uid,
+      :title,
+      :displayName,
+      :givenName,
+      :surname,
+      :initials,
+      :description,
+      :labeledURI,
+      :mail,
+      :photo,
+      :preferredLanguage,
+      :mobile,
+      :telephoneNumber,
+      :businessCategory,
+      :employeeNumber,
+      :employeeType,
+      :organizationName,
+      :userCertificate,
+      :postalAddress,
+      :postOfficeBox,
+      :postalCode,
+      :localityName,
+      :preferredDeliveryMethod,
+      :stateOrProvinceName,
+      :seeAlso
+    ])
+    |> validate_required([
+      :uid
+    ])
+    |> unique_constraint(:uid)
   end
 
   def login_changeset do
-    %__MODULE__{} |> cast(%{}, ~w(username password), ~w())
+    %__MODULE__{} |> cast(%{}, ~w(uid userPassword), ~w())
   end
-
 end

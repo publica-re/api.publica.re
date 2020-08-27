@@ -47,7 +47,11 @@ config :api, ApiWeb.Endpoint,
 # different ports.
 
 # Do not include metadata nor timestamps in development logs
-config :logger, :console, format: "[$level] $message\n"
+config :logger, :console,
+  format: "[$level] $message\n",
+  compile_time_purge_matching: [
+    [level_lower_than: :debug]
+  ]
 
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
@@ -55,17 +59,10 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
-
-config :paddle, Paddle,
-  host: "publica.re",
-  base: "dc=publica,dc=re",
-  ssl: false,
-  account_subdn: "ou=users",
-  port: 389
-
 # 2?_BL-R`eW%qj=>S
 
 config :api, Api.Guardian,
   issuer: "api",
   secret_key: "Lf3Sk5Dyyfsba+SYTMrUF7ZME4qPOFiXeHNiYsmqwQVkfC7iYgC6nG7fQXUpzM7Y"
-  # generate new with mix guardian.gen.secret
+
+# generate new with mix guardian.gen.secret

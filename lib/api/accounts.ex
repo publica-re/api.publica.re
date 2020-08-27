@@ -5,6 +5,7 @@ defmodule Api.Accounts do
 
   import Ecto.Query, warn: false
   alias Api.Repo
+  alias Api.Accounts.User
   alias Api.Ldap
 
   alias Api.Accounts.User
@@ -18,9 +19,7 @@ defmodule Api.Accounts do
       [%User{}, ...]
 
   """
-  def list_users do
-    Ldap.list()
-  end
+  def list_users, do: Repo.all(User)
 
   @doc """
   Gets a single user.
@@ -36,7 +35,7 @@ defmodule Api.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user!(id), do: Api.Ldap.get_by_uid(id)
+  def get_user!(id), do: Repo.get_by!(User, uid: id)
 
   @doc """
   Creates a user.
@@ -51,11 +50,7 @@ defmodule Api.Accounts do
 
   """
   def create_user(attrs \\ %{}) do
-    %User{}
-    |> User.changeset(attrs)
-    |> Repo.insert()
-
-    Paddle.add(%Paddle.PosixAccount{})
+    Paddle.add(attrs)
   end
 
   @doc """
@@ -70,12 +65,12 @@ defmodule Api.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_user(%User{} = user, attrs) do
-    user
-    |> User.changeset(attrs)
-    |> Repo.update()
+  def update_user(user, attrs) do
+    Paddle.modify(user, {:replace, attrs})
   end
 
+  @spec delete_user(Api.Ldap.InetOrgPerson.t()) ::
+          :ok | {:error, :insufficientAccessRights | :noSuchObject | :notAllowedOnNonLeaf}
   @doc """
   Deletes a user.
 
@@ -88,8 +83,8 @@ defmodule Api.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_user(%User{} = user) do
-    Repo.delete(user)
+  def delete_user(%Api.Ldap.InetOrgPerson{} = user) do
+    Paddle.delete(user)
   end
 
   @doc """
