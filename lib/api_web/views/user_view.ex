@@ -2,12 +2,12 @@ defmodule ApiWeb.UserView do
   use ApiWeb, :view
   alias ApiWeb.UserView
 
-  def render("index.json", %{users: users, jwt: jwt, claims: claims}) do
+  def render("index.json", %{users: users, auth: %{jwt: jwt, claims: claims}}) do
     %{data: render_many(users, UserView, "user.json"), jwt: jwt, claims: claims}
   end
 
-  def render("show.json", %{user: user}) do
-    %{data: render_one(user, UserView, "user.json")}
+  def render("show.json", %{user: user, auth: %{jwt: jwt, claims: claims}}) do
+    %{data: render_one(user, UserView, "user.json"), jwt: jwt, claims: claims}
   end
 
   def render("user.json", %{user: user}) do

@@ -18,8 +18,8 @@ defmodule ApiWeb.Router do
   scope "/api/v1", ApiWeb do
     pipe_through [:api, :authenticated]
 
-    resources "/users", UserController, only: [:index]
-    resources "/user", UserController, only: [:show]
+    get "/users", UserController, :index
+    get "/user/:id", UserController, :show
     get "/sign/out", SessionController, :signout
   end
 
