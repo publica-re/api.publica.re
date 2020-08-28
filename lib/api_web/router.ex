@@ -13,6 +13,7 @@ defmodule ApiWeb.Router do
     pipe_through :api
 
     post "/sign/in", SessionController, :signin
+    post "/user", UserController, :create
   end
 
   scope "/api/v1", ApiWeb do
@@ -20,6 +21,7 @@ defmodule ApiWeb.Router do
 
     get "/users", UserController, :index
     get "/user/:id", UserController, :show
+    delete "/user/", UserController, :delete
     get "/sign/out", SessionController, :signout
   end
 

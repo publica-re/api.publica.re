@@ -10,7 +10,7 @@ defmodule ApiWeb.SessionController do
   def signin(conn, %{"username" => username, "password" => password}) do
     case Api.Ldap.authenticate(username, password) do
       :ok -> handle_sign_in(conn, username)
-      _ -> handle_error(conn)
+      {:error, message} -> handle_error(conn, message)
     end
   end
 
@@ -35,10 +35,10 @@ defmodule ApiWeb.SessionController do
     Repo.insert_or_update(changeset)
   end
 
-  defp handle_error(conn) do
+  defp handle_error(conn, message) do
     conn
     |> put_status(:unauthorized)
-    |> render("failure.json")
+    |> render("failure.json", reason: "unable to login " <> Atom.to_string(message))
   end
 
   def signout(conn, %{}) do

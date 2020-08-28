@@ -9,7 +9,9 @@ use Mix.Config
 
 config :api,
   ecto_repos: [Api.Repo],
-  data_url: "/opt/publica.re/repos/"
+  data_url: "/opt/publica.re/repos/",
+  ldap_admin: %{user: [cn: "admin"], password: "2?_BL-R`eW%qj=>S"}
+  password_secret:
 
 # Configures the endpoint
 config :api, ApiWeb.Endpoint,

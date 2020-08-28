@@ -9,8 +9,8 @@ defmodule ApiWeb.SessionView do
     }
   end
 
-  def render("failure.json", %{}) do
-    %{status: "failure", reason: "invalid credentials or non-existent user"}
+  def render("failure.json", %{reason: reason}) do
+    %{status: "failure", reason: reason}
   end
 
   def render("signout.json", %{}) do

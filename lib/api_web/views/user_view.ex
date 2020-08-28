@@ -10,13 +10,18 @@ defmodule ApiWeb.UserView do
     %{data: render_one(user, UserView, "user.json"), jwt: jwt, claims: claims}
   end
 
+  def render("show.json", %{user: user, auth: %{jwt: jwt, claims: claims}}) do
+    %{data: render_one(user, UserView, "user.json"), jwt: jwt, claims: claims}
+  end
+
   def render("user.json", %{user: user}) do
     %{
       uid: user.uid,
       title: user.title,
       displayName: user.displayName,
       givenName: user.givenName,
-      surname: user.surname,
+      cn: user.cn,
+      sn: user.sn,
       initials: user.initials,
       description: user.description,
       labeledURI: user.labeledURI,
@@ -31,18 +36,26 @@ defmodule ApiWeb.UserView do
       preferredLanguage: user.preferredLanguage,
       mobile: user.mobile,
       telephoneNumber: user.telephoneNumber,
-      businessCategory: user.businessCategory,
-      employeeNumber: user.employeeNumber,
-      employeeType: user.employeeType,
       organizationName: user.organizationName,
       userCertificate: user.userCertificate,
       postalAddress: user.postalAddress,
       postOfficeBox: user.postOfficeBox,
       postalCode: user.postalCode,
       localityName: user.localityName,
-      preferredDeliveryMethod: user.preferredDeliveryMethod,
       stateOrProvinceName: user.stateOrProvinceName,
       seeAlso: user.seeAlso
     }
+  end
+
+  def render("success.json", %{auth: %{jwt: jwt, claims: claims}}) do
+    %{status: "success", jwt: jwt, claims: claims}
+  end
+
+  def render("success.json", %{}) do
+    %{status: "success"}
+  end
+
+  def render("failure.json", %{reason: reason, auth: %{jwt: jwt, claims: claims}}) do
+    %{status: "failure", reason: reason, jwt: jwt, claims: claims}
   end
 end

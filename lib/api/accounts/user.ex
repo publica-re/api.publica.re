@@ -7,7 +7,8 @@ defmodule Api.Accounts.User do
     field :title, :string
     field :displayName, :string
     field :givenName, :string
-    field :surname, :string
+    field :cn, :string
+    field :sn, :string
     field :initials, :string
     field :description, :string
     field :labeledURI, :string
@@ -17,16 +18,12 @@ defmodule Api.Accounts.User do
     field :preferredLanguage, :string
     field :mobile, :string
     field :telephoneNumber, :string
-    field :businessCategory, :string
-    field :employeeNumber, :string
-    field :employeeType, :string
     field :organizationName, :string
     field :userCertificate, {:array, :string}
     field :postalAddress, :string
     field :postOfficeBox, :string
     field :postalCode, :string
     field :localityName, :string
-    field :preferredDeliveryMethod, :string
     field :stateOrProvinceName, :string
     field :seeAlso, :string
     field :userPassword, :string, virtual: true
@@ -42,7 +39,8 @@ defmodule Api.Accounts.User do
       :title,
       :displayName,
       :givenName,
-      :surname,
+      :cn,
+      :sn,
       :initials,
       :description,
       :labeledURI,
@@ -51,16 +49,12 @@ defmodule Api.Accounts.User do
       :preferredLanguage,
       :mobile,
       :telephoneNumber,
-      :businessCategory,
-      :employeeNumber,
-      :employeeType,
       :organizationName,
       :userCertificate,
       :postalAddress,
       :postOfficeBox,
       :postalCode,
       :localityName,
-      :preferredDeliveryMethod,
       :stateOrProvinceName,
       :seeAlso
     ])
