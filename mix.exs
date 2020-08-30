@@ -30,10 +30,11 @@ defmodule Api.MixProject do
 
   # Specifies your project dependencies.
   #
-  # Type `mix help deps` for examples and options.
+  # Type `mix help deps` for examples and options.<
   defp deps do
     [
-      {:paddle, "~> 0.1.4"},
+      {:paddle, path: "/home/dvbmgr/paddle"},
+      {:phoenix_cgi, "~> 0.1"},
       {:guardian, "~> 2.0"},
       {:phoenix, "~> 1.5.4"},
       {:phoenix_ecto, "~> 4.1"},

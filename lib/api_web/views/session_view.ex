@@ -1,7 +1,7 @@
 defmodule ApiWeb.SessionView do
   use ApiWeb, :view
 
-  def render("success.json", %{jwt: jwt, claims: claims}) do
+  def render("success.json", %{auth: %{jwt: jwt, claims: claims}}) do
     %{
       status: "success",
       jwt: jwt,

@@ -36,6 +36,25 @@ defmodule Api.Ldap do
     Paddle.add(casted)
   end
 
+  def modify_by_uid(uid, changes) do
+    admin = Application.fetch_env!(:api, :ldap_admin)
+    Paddle.authenticate(admin.user, admin.password)
+    obj = get_by_uid(uid)
+
+    modifs =
+      Enum.reduce(changes, %{}, fn {k, v}, acc ->
+        case {k, obj[k], v} do
+          {:userPassword, _, _} -> Map.put(acc, :replace, {k, v})
+          {_, nil, nil} -> acc
+          {_, nil, _} -> Map.put(acc, :add, {k, v})
+          {_, _, nil} -> Map.put(acc, :delete, k)
+          {_, _, _} -> Map.put(acc, :replace, {k, v})
+        end
+      end)
+
+    Paddle.modify([uid: uid, ou: "users"], modifs)
+  end
+
   def list() do
     {:ok, users} = Paddle.get(filter: [objectClass: "inetOrgPerson"])
     Enum.map(users, fn x -> to_map(x) end)

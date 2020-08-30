@@ -19,7 +19,10 @@ defmodule Api.Accounts do
   end
 
   def update_user(user, attrs) do
-    Paddle.modify(user, {:replace, attrs})
+    changeset = change_user(user, attrs)
+
+    Api.Ldap.modify_by_uid(changeset.data.uid, changeset.changes)
+    Repo.insert_or_update(changeset)
   end
 
   def delete_user(user) do

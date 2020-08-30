@@ -42,6 +42,7 @@ defmodule ApiWeb.Endpoint do
 
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
+    body_reader: {PhoenixCGI.CacheRawBody, :read_body, []},
     pass: ["*/*"],
     json_decoder: Phoenix.json_library()
 

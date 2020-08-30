@@ -3,15 +3,20 @@ defmodule ApiWeb.UserView do
   alias ApiWeb.UserView
 
   def render("index.json", %{users: users, auth: %{jwt: jwt, claims: claims}}) do
-    %{data: render_many(users, UserView, "user.json"), jwt: jwt, claims: claims}
+    %{
+      status: "success",
+      data: render_many(users, UserView, "user.json"),
+      jwt: jwt,
+      claims: claims
+    }
   end
 
   def render("show.json", %{user: user, auth: %{jwt: jwt, claims: claims}}) do
-    %{data: render_one(user, UserView, "user.json"), jwt: jwt, claims: claims}
+    %{status: "success", data: render_one(user, UserView, "user.json"), jwt: jwt, claims: claims}
   end
 
   def render("show.json", %{user: user, auth: %{jwt: jwt, claims: claims}}) do
-    %{data: render_one(user, UserView, "user.json"), jwt: jwt, claims: claims}
+    %{status: "success", data: render_one(user, UserView, "user.json"), jwt: jwt, claims: claims}
   end
 
   def render("user.json", %{user: user}) do
@@ -57,5 +62,9 @@ defmodule ApiWeb.UserView do
 
   def render("failure.json", %{reason: reason, auth: %{jwt: jwt, claims: claims}}) do
     %{status: "failure", reason: reason, jwt: jwt, claims: claims}
+  end
+
+  def render("failure.json", %{reason: reason}) do
+    %{status: "failure", reason: reason}
   end
 end

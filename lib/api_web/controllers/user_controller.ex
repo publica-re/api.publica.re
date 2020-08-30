@@ -3,9 +3,14 @@ defmodule ApiWeb.UserController do
 
   defp renew_token(conn) do
     current = Api.Guardian.Plug.current_token(conn)
-    {:ok, _old, {token, claims}} = Api.Guardian.refresh(current)
-    Api.Guardian.revoke(current)
-    %{jwt: token, claims: claims}
+
+    case Api.Guardian.refresh(current) do
+      {:ok, _old, {token, claims}} ->
+        %{jwt: token, claims: claims}
+
+      _ ->
+        %{}
+    end
   end
 
   def index(conn, _params) do
@@ -25,14 +30,42 @@ defmodule ApiWeb.UserController do
     end
   end
 
-  def delete(conn, %{}) do
-    current = Api.Guardian.Plug.current_token(conn)
-    {:ok, user, _claims} = Api.Guardian.resource_from_token(current)
+  def delete(conn, %{"id" => username}) do
+    if username == "-" do
+      current = Api.Guardian.Plug.current_token(conn)
+      {:ok, user, _claims} = Api.Guardian.resource_from_token(current)
 
-    Api.Accounts.delete_user(user)
+      Api.Accounts.delete_user(user)
 
-    conn
-    |> render("success.json", %{})
+      conn
+      |> render("success.json", %{})
+    else
+      conn
+      |> put_status(:unauthorized)
+      |> render("failure.json",
+        reason: "you are not allowed to delete user " <> username,
+        auth: renew_token(conn)
+      )
+    end
+  end
+
+  def update(conn, %{"id" => username} = params) do
+    if username == "-" do
+      current = Api.Guardian.Plug.current_token(conn)
+      {:ok, user, _claims} = Api.Guardian.resource_from_token(current)
+
+      Api.Accounts.update_user(user, params)
+
+      conn
+      |> render("success.json", auth: renew_token(conn))
+    else
+      conn
+      |> put_status(:unauthorized)
+      |> render("failure.json",
+        reason: "you are not allowed to update user " <> username,
+        auth: renew_token(conn)
+      )
+    end
   end
 
   def create(conn, params) do
@@ -58,12 +91,11 @@ defmodule ApiWeb.UserController do
             render(conn, "failure.json",
               reason:
                 "missing required attribute: " <>
-                  Enum.join(Enum.map(fields, fn x -> Atom.to_string(x) end), " and "),
-              auth: renew_token(conn)
+                  Enum.join(Enum.map(fields, fn x -> Atom.to_string(x) end), " and ")
             )
 
           {:error, error} ->
-            render(conn, "failure.json", reason: error, auth: renew_token(conn))
+            render(conn, "failure.json", reason: error)
         end
       else
         conn

@@ -19,7 +19,7 @@ defmodule ApiWeb.SessionController do
     {:ok, token, claims} = Guardian.encode_and_sign(user)
 
     conn
-    |> render("success.json", jwt: token, claims: claims)
+    |> render("success.json", auth: %{jwt: token, claims: claims})
   end
 
   defp insert_or_update_user(username) do

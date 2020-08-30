@@ -34,37 +34,13 @@ defmodule Api.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [
-      :uid,
-      :title,
-      :displayName,
-      :givenName,
-      :cn,
-      :sn,
-      :initials,
-      :description,
-      :labeledURI,
-      :mail,
-      :photo,
-      :preferredLanguage,
-      :mobile,
-      :telephoneNumber,
-      :organizationName,
-      :userCertificate,
-      :postalAddress,
-      :postOfficeBox,
-      :postalCode,
-      :localityName,
-      :stateOrProvinceName,
-      :seeAlso
-    ])
+    |> cast(
+      attrs,
+      ~w(uid title displayName givenName cn sn initials description labeledURI mail photo preferredLanguage mobile telephoneNumber organizationName userCertificate postalAddress postOfficeBox postalCode localityName stateOrProvinceName seeAlso userPassword)a
+    )
     |> validate_required([
       :uid
     ])
     |> unique_constraint(:uid)
-  end
-
-  def login_changeset do
-    %__MODULE__{} |> cast(%{}, ~w(uid userPassword), ~w())
   end
 end
